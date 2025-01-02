@@ -30,15 +30,15 @@ def run_in_virtualenv():
 def print_banner():
     """Display a colorful banner."""
     banner = """
-\033[91m      **     **       **********                **      **                                              **********                   **  
-\033[93m     ****   //       /////**///                /**     /**                                             /////**///                   /**  
-\033[92m    **//**   **          /**      ******       /**     /** **   ** **********   ******   *******           /**      *****  **   ** ******  
-\033[96m   **  //** /**          /**     **////**      /**********/**  /**//**//**//** //////** //**///**          /**     **///**//** ** ///**/   
-\033[94m  **********/**          /**    /**   /**      /**//////**/**  /** /** /** /**  *******  /**  /**          /**    /******* //***    /**    
-\033[95m /**//////**/**          /**    /**   /**      /**     /**/**  /** /** /** /** **////**  /**  /**          /**    /**////   **/**   /**    
-\033[91m /**     /**/**          /**    //******       /**     /**//****** *** /** /**//******** ***  /**          /**    //****** ** //**  //**   
-\033[93m //      // //           //      //////        //      //  ////// ///  //  //  //////// ///   //           //      ////// //   //    //    
-\033[94m       AI Text to Human Text Converter - Created by Shaid Mahamud
+\033[96m ooooo   ooooo                                                          ooooooooooooo                           .   
+ `888'   `888'                                                          8'   888   `8                         .o8   
+  888     888  oooo  oooo  ooo. .oo.  .oo.    .oooo.   ooo. .oo.             888       .ooooo.  oooo    ooo .o888oo 
+  888ooooo888  `888  `888  `888P"Y88bP"Y88b  `P  )88b  `888P"Y88b            888      d88' `88b  `88b..8P'    888   
+  888     888   888   888   888   888   888   .oP"888   888   888            888      888ooo888    Y888'      888   
+  888     888   888   888   888   888   888  d8(  888   888   888            888      888    .o  .o8"'88b     888 . 
+ o888o   o888o  `V88V"V8P' o888o o888o o888o `Y888""8o o888o o888o          o888o     `Y8bod8P' o88'   888o   "888" 
+\033[92m                                                                                                               
+Advanced AI Text to Human Text Converter - Created by Shaid Mahamud
 \033[0m
 """
     print(banner)
@@ -106,7 +106,7 @@ def process_large_file(input_file, output_file):
         print(f"An error occurred: {e}")
 
 def main():
-    print_banner()
+    print_banner()  # Display the colorful banner
     print("\033[92mAdvanced AI to Human Text Converter for Large Files\033[0m")
     input_file = input("Enter the path to the input file: ").strip()
     output_file = input("Enter the path to save the output file: ").strip()
@@ -118,9 +118,10 @@ def main():
     process_large_file(input_file, output_file)
 
 if __name__ == "__main__":
-    if not VENV_DIR.exists():
+    # Ensure the script runs in the virtual environment
+    if not VENV_DIR.exists() or not (VENV_DIR / "bin" / "python").exists():
         setup_virtual_environment()
-    elif sys.prefix != str(VENV_DIR):
         run_in_virtualenv()
     else:
         main()
+            

@@ -1,33 +1,29 @@
+import os
 import subprocess
 import sys
-import os
+from pathlib import Path
 
-# Function to install required libraries
-def install_packages():
-    required_packages = ["openai", "tqdm"]
-    for package in required_packages:
-        try:
-            __import__(package)
-        except ImportError:
-            print(f"Installing {package}...")
-            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-# Install required libraries before proceeding
-install_packages()
-
-# Import libraries after installation
-import openai
-from tqdm import tqdm
-import threading
-from queue import Queue
-
-# Set up the OpenAI API key
-openai.api_key = 'your-api-key-here'
-
-# Parameters
+# Constants
+VENV_DIR = Path("venv")
+REQUIRED_PACKAGES = ["openai", "tqdm"]
 MAX_TOKENS = 150
 CHUNK_SIZE = 3000
 THREAD_COUNT = 5
+
+def setup_virtual_environment():
+    """Creates a virtual environment and installs required packages."""
+    if not VENV_DIR.exists():
+        print("Creating virtual environment...")
+        subprocess.check_call([sys.executable, "-m", "venv", str(VENV_DIR)])
+    pip_executable = VENV_DIR / "bin" / "pip" if os.name != "nt" else VENV_DIR / "Scripts" / "pip"
+    for package in REQUIRED_PACKAGES:
+        print(f"Installing {package}...")
+        subprocess.check_call([str(pip_executable), "install", package])
+
+def run_script():
+    """Runs the main script inside the virtual environment."""
+    python_executable = VENV_DIR / "bin" / "python" if os.name != "nt" else VENV_DIR / "Scripts" / "python"
+    subprocess.check_call([str(python_executable), __file__])
 
 def print_banner():
     """Prints a colorful custom banner."""
@@ -48,6 +44,8 @@ def print_banner():
 def convert_ai_to_human_text(ai_text):
     """Send AI-generated text to OpenAI API for conversion."""
     try:
+        import openai
+        openai.api_key = "your-api-key-here"  # Replace with your OpenAI API key
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=f"Rewrite the following AI-generated text to make it sound more human-like:\n\n{ai_text}",
@@ -61,6 +59,10 @@ def convert_ai_to_human_text(ai_text):
 def process_large_file(input_file, output_file):
     """Process a large file in chunks."""
     try:
+        from tqdm import tqdm
+        import threading
+        from queue import Queue
+
         queue = Queue()
         threads = []
         progress_bar = None
@@ -115,5 +117,10 @@ def main():
     process_large_file(input_file, output_file)
 
 if __name__ == "__main__":
-    main()
-              
+    if not VENV_DIR.exists():
+        setup_virtual_environment()
+    elif sys.prefix != str(VENV_DIR):
+        run_script()
+    else:
+        main()
+        

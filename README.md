@@ -24,6 +24,8 @@
 ```bash
 git clone https://github.com/shaid69/Ai_To_Human_Text.git
 cd Ai_To_Human_Text
+chmod +x ai_to_human_text.py
+./ai_to_human_text.py
 ```
 
 ### Run the Script

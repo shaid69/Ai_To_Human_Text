@@ -1,32 +1,34 @@
+#!/usr/bin/env python3
+
 import os
 import subprocess
 import sys
 from pathlib import Path
 
 # Constants
-VENV_DIR = Path("venv")
+VENV_DIR = Path.home() / ".ai_to_human_env"  # Virtual environment directory
 REQUIRED_PACKAGES = ["openai", "tqdm"]
 MAX_TOKENS = 150
 CHUNK_SIZE = 3000
 THREAD_COUNT = 5
 
 def setup_virtual_environment():
-    """Creates a virtual environment and installs required packages."""
+    """Create a virtual environment and install required packages."""
     if not VENV_DIR.exists():
-        print("Creating virtual environment...")
+        print("Setting up the environment...")
         subprocess.check_call([sys.executable, "-m", "venv", str(VENV_DIR)])
-    pip_executable = VENV_DIR / "bin" / "pip" if os.name != "nt" else VENV_DIR / "Scripts" / "pip"
+    pip_executable = VENV_DIR / "bin" / "pip"
     for package in REQUIRED_PACKAGES:
         print(f"Installing {package}...")
         subprocess.check_call([str(pip_executable), "install", package])
 
-def run_script():
-    """Runs the main script inside the virtual environment."""
-    python_executable = VENV_DIR / "bin" / "python" if os.name != "nt" else VENV_DIR / "Scripts" / "python"
-    subprocess.check_call([str(python_executable), __file__])
+def run_in_virtualenv():
+    """Restart the script within the virtual environment."""
+    python_executable = VENV_DIR / "bin" / "python"
+    subprocess.check_call([str(python_executable), __file__] + sys.argv[1:])
 
 def print_banner():
-    """Prints a colorful custom banner."""
+    """Display a colorful banner."""
     banner = """
 \033[91m      **     **       **********                **      **                                              **********                   **  
 \033[93m     ****   //       /////**///                /**     /**                                             /////**///                   /**  
@@ -39,7 +41,7 @@ def print_banner():
 \033[94m       AI Text to Human Text Converter - Created by Shaid Mahamud
 \033[0m
 """
-    print(banner)  # Prints the colorful banner
+    print(banner)
 
 def convert_ai_to_human_text(ai_text):
     """Send AI-generated text to OpenAI API for conversion."""
@@ -65,7 +67,6 @@ def process_large_file(input_file, output_file):
 
         queue = Queue()
         threads = []
-        progress_bar = None
         output_lines = []
 
         with open(input_file, 'r', encoding='utf-8') as infile:
@@ -105,7 +106,7 @@ def process_large_file(input_file, output_file):
         print(f"An error occurred: {e}")
 
 def main():
-    print_banner()  # Display the colorful banner
+    print_banner()
     print("\033[92mAdvanced AI to Human Text Converter for Large Files\033[0m")
     input_file = input("Enter the path to the input file: ").strip()
     output_file = input("Enter the path to save the output file: ").strip()
@@ -120,7 +121,6 @@ if __name__ == "__main__":
     if not VENV_DIR.exists():
         setup_virtual_environment()
     elif sys.prefix != str(VENV_DIR):
-        run_script()
+        run_in_virtualenv()
     else:
         main()
-        
